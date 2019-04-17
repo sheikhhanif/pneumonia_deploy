@@ -1,5 +1,5 @@
 from __future__ import division, print_function
-
+import tensorflow as tf
 import base64
 import json
 from io import BytesIO
@@ -23,9 +23,15 @@ from flask import Flask, redirect, url_for, request, render_template
 from werkzeug.utils import secure_filename
 from gevent.pywsgi import WSGIServer
 # from flask_cors import CORS
+tf.logging.info('TensorFlow')
+
+tf.logging.set_verbosity(tf.logging.ERROR)
+tf.logging.info('TensorFlow')
+
 
 app = Flask(__name__)
 
+"""
 # this is custome loss functin
 # focal loss 
 def focal_loss(alpha=0.25,gamma=2.0):
@@ -44,11 +50,11 @@ def focal_loss(alpha=0.25,gamma=2.0):
         # compute the final loss and return
         return K.mean(alpha_factor*modulating_factor*bce, axis=-1)
     return focal_crossentropy
-
+"""
 
 # model = #laoding model
-MODEL_PATH = 'models/model.hdf5'
-model = load_model(MODEL_PATH, custom_objects={'FocalLoss': focal_loss, 'focal_crossentropy':focal_loss()})
+MODEL_PATH = 'models/model.h5'
+model = load_model(MODEL_PATH)
 model._make_predict_function()
 
 
