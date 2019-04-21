@@ -1,56 +1,31 @@
 from __future__ import division, print_function
-import tensorflow as tf
-import base64
-import json
-from io import BytesIO
-from keras import backend as K
-import numpy as np
-import requests
-from flask import Flask, request, jsonify
-from keras.applications import inception_v3
-from keras.preprocessing import image
-from keras.models import load_model
-from keras.backend import clear_session
-# coding=utf-8
-import sys
-import os
-import glob
 import re
-import numpy as np
+import os
+import sys
+import glob
 import math
-# Flask utils
-from flask import Flask, redirect, url_for, request, render_template
-from werkzeug.utils import secure_filename
+import json
+import base64
+import requests
+import numpy as np
+from io import BytesIO
+import tensorflow as tf
+from keras import backend as K
+from keras.models import load_model
 from gevent.pywsgi import WSGIServer
-# from flask_cors import CORS
-tf.logging.info('TensorFlow')
+from keras.preprocessing import image
+from keras.backend import clear_session
+from werkzeug.utils import secure_filename
+from keras.applications import inception_v3
+from flask import Flask, redirect, url_for, request, render_template, jsonify
 
+
+tf.logging.info('TensorFlow')
 tf.logging.set_verbosity(tf.logging.ERROR)
 tf.logging.info('TensorFlow')
 
 
 app = Flask(__name__)
-
-"""
-# this is custome loss functin
-# focal loss 
-def focal_loss(alpha=0.25,gamma=2.0):
-    def focal_crossentropy(y_true, y_pred):
-        bce = K.binary_crossentropy(y_true, y_pred)
-        
-        y_pred = K.clip(y_pred, K.epsilon(), 1.- K.epsilon())
-        p_t = (y_true*y_pred) + ((1-y_true)*(1-y_pred))
-        
-        alpha_factor = 1
-        modulating_factor = 1
-
-        alpha_factor = y_true*alpha + ((1-alpha)*(1-y_true))
-        modulating_factor = K.pow((1-p_t), gamma)
-
-        # compute the final loss and return
-        return K.mean(alpha_factor*modulating_factor*bce, axis=-1)
-    return focal_crossentropy
-"""
 
 # model = #laoding model
 MODEL_PATH = 'models/model.h5'
@@ -78,17 +53,14 @@ def upload():
         file_path = os.path.join(
             basepath, 'uploads', secure_filename(f.filename))
         f.save(file_path)
+
         # Make prediction
         predict = model_predict(file_path, model)
         prediction = ''
-        #pred = predict['predictions']
         if predict[0][0] >= 0.5:
             prediction = 'The Patient has ' + str(math.ceil(predict[0][0]*100)) +'% chance of Pneumona'
         else:
             prediction = 'The Patient is Normal with ' + str(math.ceil(predict[0][0]*100)) + '%'
-        # pred_class = preds.argmax(axis=-1)            # Simple argmax
-           # ImageNet Decode
-        #result = 'Penumonia rate', preds           # Convert to string
         return prediction
     return None
 
