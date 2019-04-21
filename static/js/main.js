@@ -1,54 +1,93 @@
-$(document).ready(function () {
-    // Init
-    $('.image-section').hide();
-    $('.loader').hide();
-    $('#result').hide();
+(function($) {
+	"use strict"
 
-    // Upload Preview
-    function readURL(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                $('#imagePreview').css('background-image', 'url(' + e.target.result + ')');
-                $('#imagePreview').hide();
-                $('#imagePreview').fadeIn(650);
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    $("#imageUpload").change(function () {
-        $('.image-section').show();
-        $('#btn-predict').show();
-        $('#result').text('');
-        $('#result').hide();
-        readURL(this);
-    });
+	///////////////////////////
+	// Preloader
+	$(window).on('load', function() {
+		$("#preloader").delay(600).fadeOut();
+	});
 
-    // Predict
-    $('#btn-predict').click(function () {
-        var form_data = new FormData($('#upload-file')[0]);
+	///////////////////////////
+	// Scrollspy
+	$('body').scrollspy({
+		target: '#nav',
+		offset: $(window).height() / 2
+	});
 
-        // Show loading animation
-        $(this).hide();
-        $('.loader').show();
+	///////////////////////////
+	// Smooth scroll
+	$("#nav .main-nav a[href^='#']").on('click', function(e) {
+		e.preventDefault();
+		var hash = this.hash;
+		$('html, body').animate({
+			scrollTop: $(this.hash).offset().top
+		}, 600);
+	});
 
-        // Make prediction by calling api /predict
-        $.ajax({
-            type: 'POST',
-            url: '/predict',
-            data: form_data,
-            contentType: false,
-            cache: false,
-            processData: false,
-            async: true,
-            success: function (data) {
-                // Get and display the result
-                $('.loader').hide();
-                $('#result').fadeIn(600);
-                $('#result').text(' Result:  ' + data);
-                console.log('Success!');
-            },
-        });
-    });
+	$('#back-to-top').on('click', function(){
+		$('body,html').animate({
+			scrollTop: 0
+		}, 600);
+	});
 
-});
+	///////////////////////////
+	// Btn nav collapse
+	$('#nav .nav-collapse').on('click', function() {
+		$('#nav').toggleClass('open');
+	});
+
+	///////////////////////////
+	// Mobile dropdown
+	$('.has-dropdown a').on('click', function() {
+		$(this).parent().toggleClass('open-drop');
+	});
+
+	///////////////////////////
+	// On Scroll
+	$(window).on('scroll', function() {
+		var wScroll = $(this).scrollTop();
+
+		// Fixed nav
+		wScroll > 1 ? $('#nav').addClass('fixed-nav') : $('#nav').removeClass('fixed-nav');
+
+		// Back To Top Appear
+		wScroll > 700 ? $('#back-to-top').fadeIn() : $('#back-to-top').fadeOut();
+	});
+
+	///////////////////////////
+	// magnificPopup
+	$('.work').magnificPopup({
+		delegate: '.lightbox',
+		type: 'image'
+	});
+
+	///////////////////////////
+	// Owl Carousel
+	$('#about-slider').owlCarousel({
+		items:1,
+		loop:true,
+		margin:15,
+		nav: true,
+		navText : ['<i class="fa fa-angle-left"></i>','<i class="fa fa-angle-right"></i>'],
+		dots : true,
+		autoplay : true,
+		animateOut: 'fadeOut'
+	});
+
+	$('#testimonial-slider').owlCarousel({
+		loop:true,
+		margin:15,
+		dots : true,
+		nav: false,
+		autoplay : true,
+		responsive:{
+			0: {
+				items:1
+			},
+			992:{
+				items:2
+			}
+		}
+	});
+
+})(jQuery);
