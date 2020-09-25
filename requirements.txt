@@ -4,7 +4,7 @@ pandas==0.22.0
 numpy==1.11.2
 scipy==0.18.1
 scikit-learn>=0.18
-tensorflow==1.13
+tensorflow==1.15.4
 gevent
 requests
 supervisor
